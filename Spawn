@@ -1,0 +1,42 @@
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class SpawnPlugin extends JavaPlugin {
+
+    @Override
+    public void onEnable() {
+        // Registra il comando "/setspawn"
+        getCommand("setspawn").setExecutor(this);
+    }
+
+    @Override
+    public void onDisable() {
+        // Plugin disabilitato
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("Questo comando può essere eseguito solo da un giocatore.");
+            return true;
+        }
+
+        Player player = (Player) sender;
+
+        // Controlla se il comando è "/setspawn"
+        if (command.getName().equalsIgnoreCase("setspawn")) {
+            // Imposta il punto di spawn
+            Location spawnLocation = player.getLocation();
+            World world = player.getWorld();
+            world.setSpawnLocation(spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ());
+            player.sendMessage("Spawn impostato con successo!");
+            return true;
+        }
+
+        return false;
+    }
+}
