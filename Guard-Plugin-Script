@@ -1,0 +1,79 @@
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Guard extends JavaPlugin implements Listener {
+    private List<Location> protectedAreas = new ArrayList<>();
+
+    @Override
+    public void onEnable() {
+        getLogger().info("Plugin Guard abilitato!");
+        getServer().getPluginManager().registerEvents(this, this);
+    }
+
+    @Override
+    public void onDisable() {
+        getLogger().info("Plugin Guard disabilitato!");
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (command.getName().equalsIgnoreCase("guard")) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage("Questo comando può essere eseguito solo da un giocatore.");
+                return true;
+            }
+
+            Player player = (Player) sender;
+            if (args.length == 1 && args[0].equalsIgnoreCase("set")) {
+                Location location = player.getLocation();
+                protectedAreas.add(location);
+                player.sendMessage("Area protetta impostata correttamente.");
+                return true;
+            } else if (args.length == 1 && args[0].equalsIgnoreCase("remove")) {
+                Location location = player.getLocation();
+                protectedAreas.remove(location);
+                player.sendMessage("Area protetta rimossa correttamente.");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
+        if (isProtected(event.getBlock().getLocation())) {
+            event.setCancelled(true);
+            event.getPlayer().sendMessage("Non puoi piazzare blocchi in questa area protetta.");
+        }
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        if (isProtected(event.getBlock().getLocation())) {
+            event.setCancelled(true);
+            event.getPlayer().sendMessage("Non puoi distruggere blocchi in questa area protetta.");
+        }
+    }
+
+    private boolean isProtected(Location location) {
+        for (Location protectedArea : protectedAreas) {
+            if (protectedArea.getWorld().equals(location.getWorld())
+                    && protectedArea.distanceSquared(location) < 25) { // Imposta la distanza massima a 5 blocchi
+                return true;
+            }
+        }
+        return false;
+    }
+}
