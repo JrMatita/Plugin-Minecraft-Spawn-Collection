@@ -1,0 +1,76 @@
+import org.bukkit.Location;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+public class Hamburger extends JavaPlugin {
+
+    private Map<UUID, Location> playerHomes = new HashMap<>();
+    private Map<String, Location> warps = new HashMap<>();
+
+    @Override
+    public void onEnable() {
+        getLogger().info("Plugin Hamburger abilitato!");
+    }
+
+    @Override
+    public void onDisable() {
+        getLogger().info("Plugin Hamburger disabilitato!");
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("Questo comando può essere eseguito solo da un giocatore.");
+            return true;
+        }
+
+        Player player = (Player) sender;
+        if (command.getName().equalsIgnoreCase("sethome")) {
+            playerHomes.put(player.getUniqueId(), player.getLocation());
+            player.sendMessage("Home impostata correttamente!");
+            return true;
+        } else if (command.getName().equalsIgnoreCase("home")) {
+            Location home = playerHomes.get(player.getUniqueId());
+            if (home != null) {
+                player.teleport(home);
+                player.sendMessage("Sei stato teletrasportato a casa!");
+            } else {
+                player.sendMessage("Non hai impostato la tua home. Usa /sethome per farlo.");
+            }
+            return true;
+        } else if (command.getName().equalsIgnoreCase("setwarp")) {
+            if (args.length != 1) {
+                player.sendMessage("Utilizzo corretto: /setwarp <nome>");
+                return true;
+            }
+
+            String warpName = args[0];
+            warps.put(warpName, player.getLocation());
+            player.sendMessage("Warp '" + warpName + "' impostato correttamente!");
+            return true;
+        } else if (command.getName().equalsIgnoreCase("warp")) {
+            if (args.length != 1) {
+                player.sendMessage("Utilizzo corretto: /warp <nome>");
+                return true;
+            }
+
+            String warpName = args[0];
+            Location warpLocation = warps.get(warpName);
+            if (warpLocation != null) {
+                player.teleport(warpLocation);
+                player.sendMessage("Sei stato teletrasportato al warp '" + warpName + "'!");
+            } else {
+                player.sendMessage("Il warp '" + warpName + "' non esiste.");
+            }
+            return true;
+        }
+
+        return false;
+    }
+}
