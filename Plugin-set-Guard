@@ -1,0 +1,2 @@
+When the server is active, players can use the commands "/guard set" to set a protected area around their current location and "/guard remove" to remove it. 
+Other players will not be able to destroy or place blocks within these protected areas.
