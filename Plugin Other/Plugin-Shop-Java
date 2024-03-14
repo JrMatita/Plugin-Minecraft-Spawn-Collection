@@ -1,0 +1,89 @@
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class ShopPlugin extends JavaPlugin {
+
+    private Map<String, Double> prices = new HashMap<>();
+
+    @Override
+    public void onEnable() {
+        // Inizializza i prezzi degli oggetti
+        prices.put("diamond", 10.0);
+        prices.put("iron_ingot", 2.0);
+        prices.put("emerald", 15.0);
+        // Puoi aggiungere altri prezzi qui
+        getLogger().info("Plugin Shop abilitato!");
+    }
+
+    @Override
+    public void onDisable() {
+        getLogger().info("Plugin Shop disabilitato!");
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("Questo comando può essere eseguito solo da un giocatore.");
+            return true;
+        }
+
+        Player player = (Player) sender;
+
+        if (command.getName().equalsIgnoreCase("buy")) {
+            if (args.length != 2) {
+                player.sendMessage("Utilizzo corretto: /buy <oggetto> <quantità>");
+                return true;
+            }
+
+            String itemName = args[0].toLowerCase();
+            int quantity;
+            try {
+                quantity = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                player.sendMessage("La quantità deve essere un numero intero.");
+                return true;
+            }
+
+            double price = prices.getOrDefault(itemName, -1.0);
+            if (price == -1.0) {
+                player.sendMessage("Oggetto non valido.");
+                return true;
+            }
+
+            double totalPrice = price * quantity;
+            if (totalPrice > getPlayerBalance(player)) {
+                player.sendMessage("Non hai abbastanza soldi per acquistare questo oggetto.");
+                return true;
+            }
+
+            ItemStack itemStack = new ItemStack(Material.getMaterial(itemName.toUpperCase()), quantity);
+            player.getInventory().addItem(itemStack);
+            subtractPlayerBalance(player, totalPrice);
+            player.sendMessage("Hai acquistato " + quantity + " " + itemName + "(i) per $" + totalPrice + ".");
+            return true;
+        } else if (command.getName().equalsIgnoreCase("sell")) {
+            // Implementazione della vendita di oggetti
+            // Simile all'acquisto, ma invertito: i giocatori vendono gli oggetti e ricevono denaro
+        }
+
+        return false;
+    }
+
+    private double getPlayerBalance(Player player) {
+        // Implementazione per ottenere il saldo del giocatore (per esempio da un sistema di economia)
+        // Ritorna il saldo del giocatore, ad esempio:
+        // return economy.getBalance(player);
+    }
+
+    private void subtractPlayerBalance(Player player, double amount) {
+        // Implementazione per sottrarre denaro dal saldo del giocatore (per esempio da un sistema di economia)
+        // Sottrae l'importo dal saldo del giocatore, ad esempio:
+        // economy.withdrawPlayer(player, amount);
+    }
+}
