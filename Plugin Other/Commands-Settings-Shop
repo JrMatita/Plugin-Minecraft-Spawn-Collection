@@ -1,0 +1,4 @@
+This plugin implements two main commands: /buy and /sell. The /buy command allows players to purchase items from the store by specifying the item name and desired quantity. 
+The command checks the prices from the map prices and deducts the cost from the player's balance. You should implement a getPlayerBalance function to get the player's balance,
+a subtractPlayerBalance function to deduct the money from the player's balance.
+The /sell command would allow you to sell items to the store, reversing the purchasing process. This command was not implemented in the example above, but you could do so following a similar approach to the /buy command
