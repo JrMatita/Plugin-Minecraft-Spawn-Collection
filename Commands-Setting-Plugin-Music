@@ -1,0 +1,2 @@
+The "/playmusic" command plays a default music track (the sound of the music disc on hold) to the player who executes it.
+When a player right-clicks a music disc, the sound of the music disc waiting at its location plays.
