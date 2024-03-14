@@ -1,0 +1,40 @@
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class EnderChestPlugin extends JavaPlugin {
+
+    @Override
+    public void onEnable() {
+        getLogger().info("Plugin EnderChest abilitato!");
+    }
+
+    @Override
+    public void onDisable() {
+        getLogger().info("Plugin EnderChest disabilitato!");
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("Questo comando può essere eseguito solo da un giocatore.");
+            return true;
+        }
+
+        Player player = (Player) sender;
+
+        if (command.getName().equalsIgnoreCase("ec")) {
+            openEnderChest(player);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void openEnderChest(Player player) {
+        Inventory enderChest = player.getEnderChest();
+        player.openInventory(enderChest);
+    }
+}
