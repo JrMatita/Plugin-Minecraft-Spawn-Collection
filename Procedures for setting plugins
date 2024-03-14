@@ -1,0 +1,5 @@
+1) Compile the Java code into a JAR file. Make sure to also include all necessary dependencies for Bukkit/Spigot.
+2) Place the JAR file on your Bukkit/Spigot server in the plugins folder.
+3) Start or restart the Minecraft server.
+4) Log into the game as an administrator.
+5) Use the /setspawn command in the game to set the spawn point to your current location.
